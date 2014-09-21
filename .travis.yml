@@ -1,0 +1,18 @@
+language: c
+env:
+  - BUILD_TARGET=imx6
+  - BUILD_TARGET=x86
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y ccache
+install:
+  - if [ "$BUILD_TARGET" = "imx6" ]; then SDK_TARBALL='http://downloads.openwrt.org/barrier_breaker/14.07/imx6/generic/OpenWrt-SDK-imx6-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2' ; fi
+  - if [ "$BUILD_TARGET" = "x86" ]; then SDK_TARBALL='http://downloads.openwrt.org/barrier_breaker/14.07/x86/generic/OpenWrt-SDK-x86-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2'; fi
+  - wget $SDK_TARBALL -O sdk.tar.bz2
+  - tar -jxf sdk.tar.bz2
+  - mv -f OpenWrt-SDK-* openwrt-sdk
+  - cp -rf nodejs openwrt-sdk/package
+  - cd openwrt-sdk
+  - make package/nodejs/prepare
+script:
+  - make package/nodejs/compile
